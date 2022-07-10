@@ -1,4 +1,8 @@
-package com.example.crypto.exeption;
+package com.example.crypto.exception;
 
-public class CoinNotFoundExeption {
+public class CoinNotFoundException extends RuntimeException{
+
+    public CoinNotFoundException(String message) {
+        super(message);
+    }
 }

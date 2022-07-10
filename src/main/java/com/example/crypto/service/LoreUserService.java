@@ -1,5 +1,6 @@
 package com.example.crypto.service;
 
+import com.example.crypto.dto.UserRegDto;
 import com.example.crypto.exception.CoinNotFoundException;
 import com.example.crypto.exception.UserIsAlreadyExistException;
 import com.example.crypto.model.Coin;
@@ -12,19 +13,20 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class LoreUserService implements UserService{
 
     private final CoinRepository coinRepository;
     private final UserRepository userRepository;
 
-    public User notify(String username, Symbol symbol) {
-        if (userRepository.existsByUsername(username)) {
-            throw new UserIsAlreadyExistException(String.format("User {} already exist %s.", username));
+    @Override
+    public User notify(UserRegDto user) {
+        if (userRepository.existsByUsernameAndSymbol(user.getUsername(), user.getSymbol())) {
+            throw new UserIsAlreadyExistException(String.format("User {} already exist %s.", user.getUsername()));
         }
-        Coin coin = coinRepository.findCoinBySymbol(symbol)
-                .orElseThrow(() -> new CoinNotFoundException(String.format("Coin %S not found.", symbol)));
+        Coin coin = coinRepository.findCoinBySymbol(user.getSymbol())
+                .orElseThrow(() -> new CoinNotFoundException(String.format("Coin %S not found.", user.getSymbol())));
         return userRepository.save(new User(
-                username,
+                user.getUsername(),
                 coin.getSymbol(),
                 coin.getPrice()
         ));
